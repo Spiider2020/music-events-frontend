@@ -18,6 +18,10 @@
 	color: #000000;
 }
 
+.header span {
+	color: #ffffff;
+}
+
 .header ul {
 	display: flex;
 	justify-content: center;
