@@ -4,7 +4,7 @@ import styles from '@/styles/Footer.module.css';
 export default function Footer() {
 	return (
 		<footer className={styles.footer}>
-			<p>Copyright &copy; Music Events 2021</p>
+			<p>Copyright &copy; Music Events 2022</p>
 			<p>
 				<Link href='/about'>About Project</Link>
 			</p>

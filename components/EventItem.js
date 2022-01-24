@@ -1,15 +1,17 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/EventItem.module.css';
+import defImage from '../public/images/event-default.png';
 
 export default function EventItem({ evt }) {
 	return (
 		<div className={styles.event}>
 			<div className={styles.img}>
 				<Image
-					src={evt.image ? evt.image.formats.thumbnail.url : '/images/event-default.png'}
+					src={evt.image ? evt.image.formats.thumbnail.url : defImage}
 					width={170}
 					height={100}
+					alt='event default'
 				/>
 			</div>
 			<div className={styles.info}>

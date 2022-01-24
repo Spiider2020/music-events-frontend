@@ -7,7 +7,6 @@ const cors = initMiddleware(
 	// You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
 	Cors({
 		// Only allow requests with GET, POST and OPTIONS
-		origin: '*',
 		methods: ['GET', 'POST', 'OPTIONS'],
 	})
 );
@@ -17,37 +16,20 @@ export default async (req, res) => {
 	await cors(req, res);
 	// Rest of API logic
 	if (req.method === 'POST') {
-		const { username, email, password } = req.body;
-
-		const strapiRes = await fetch(`${API_URL}/auth/local/register`, {
+		const { token } = cookie.parse(req.headers.cookie);
+		const strapiRes = await fetch(`${API_URL}/events`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
 			},
-			body: JSON.stringify({
-				username,
-				email,
-				password,
-			}),
+			body: JSON.stringify(req.body),
 		});
 		const data = await strapiRes.json();
-		console.log(data.jwt);
-
 		if (strapiRes.ok) {
-			//Set cookie
-			res.setHeader(
-				'Set-Cookie',
-				cookie.serialize('token', data.jwt, {
-					httpOnly: true,
-					secure: process.env.NODE_ENV !== 'development',
-					maxAge: 60 * 60 * 24 * 7, // 1 week
-					sameSite: 'strict',
-					path: '/',
-				})
-			);
-			res.status(200).json({ user: data.user });
+			res.status(200).json(data);
 		} else {
-			res.status(data.statusCode).json({ message: data.message[0].messages[0].message });
+			res.status(403).json({ message: 'User forbidden' });
 		}
 	} else {
 		res.setHeader('Allow', ['POST']);

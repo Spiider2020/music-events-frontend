@@ -1,3 +1,4 @@
+import { parseCookies } from '@/helpers/index';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
@@ -9,11 +10,12 @@ import Image from 'next/image';
 import Layout from '@/components/Layout';
 import Modal from '@/components/Modal';
 import ImageUpload from '@/components/ImageUpload';
-import { API_URL } from '@/config/index';
+import { API_URL, NEXT_URL } from '@/config/index';
 import styles from '@/styles/Form.module.css';
 import { route } from 'next/dist/server/router';
+import { parse } from 'cookie';
 
-export default function EditEventPage({ evt }) {
+export default function EditEventPage({ evt, token }) {
 	const [values, setValues] = useState({
 		name: evt.name,
 		performers: evt.performers,
@@ -35,15 +37,20 @@ export default function EditEventPage({ evt }) {
 		if (hasEmptyFields) {
 			toast.error('Please fill all the fields', toastOptions);
 		} else {
-			const res = await fetch(`${API_URL}/events/${evt.id}`, {
+			const res = await fetch(`${NEXT_URL}/api/edit/${evt.id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
 				},
 				body: JSON.stringify(values),
 			});
 
 			if (!res.ok) {
+				if (res.status === 403 || res.status === 401) {
+					toast.error('Unauthorized', toastOptions);
+					return;
+				}
 				toast.error('Something Went Wrong', toastOptions);
 			} else {
 				const evt = await res.json();
@@ -58,9 +65,8 @@ export default function EditEventPage({ evt }) {
 	};
 
 	const imageUploaded = async (e) => {
-		const res = await fetch(`${API_URL}/events/${evt.id}`);
+		const res = await fetch(`${NEXT_URL}/api/events/${evt.id}`);
 		const data = await res.json();
-
 		setImagePreview(data.image.formats.thumbnail.url);
 		setShowModal(false);
 	};
@@ -131,7 +137,7 @@ export default function EditEventPage({ evt }) {
 			</form>
 			<h2>Event Image</h2>
 			{imagePreview ? (
-				<Image src={imagePreview} height={100} width={170} />
+				<Image src={imagePreview} height={100} width={170} alt='event poster preview' />
 			) : (
 				<div>
 					<p>No image uploaded</p>
@@ -145,21 +151,21 @@ export default function EditEventPage({ evt }) {
 				</button>
 			</div>
 			<Modal show={showModal} onClose={() => setShowModal(false)}>
-				<ImageUpload evtId={evt.id} imageUploaded={imageUploaded} />
+				<ImageUpload evtId={evt.id} imageUploaded={imageUploaded} token={token} />
 			</Modal>
 		</Layout>
 	);
 }
 
 export async function getServerSideProps({ params: { id }, req }) {
+	const { token } = parseCookies(req);
 	const res = await fetch(`${API_URL}/events/${id}`);
 	const evt = await res.json();
-
-	console.log(req.headers.cookie);
 
 	return {
 		props: {
 			evt,
+			token,
 		},
 	};
 }

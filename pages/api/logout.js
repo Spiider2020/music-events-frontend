@@ -1,7 +1,21 @@
 import cookie from 'cookie';
-import { API_URL } from '@/config/index';
+import { API_URL } from '@/config/index.js';
+import Cors from 'cors';
+import initMiddleware from '../../lib/init-middleware';
+
+const cors = initMiddleware(
+	// You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
+	Cors({
+		// Only allow requests with GET, POST and OPTIONS
+		origin: '*',
+		methods: ['GET', 'POST', 'OPTIONS'],
+	})
+);
 
 export default async (req, res) => {
+	// Run cors
+	await cors(req, res);
+	// Rest of API logic
 	if (req.method === 'POST') {
 		//destroy cookie
 		res.setHeader(

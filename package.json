@@ -1,25 +1,30 @@
 {
-  "name": "music-events-frontend",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "cookie": "^0.4.1",
-    "moment": "^2.29.1",
-    "next": "11.1.2",
-    "qs": "^6.10.1",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-icons": "^4.3.1",
-    "react-toastify": "^8.0.3"
-  },
-  "devDependencies": {
-    "eslint": "7.32.0",
-    "eslint-config-next": "11.1.2"
-  }
+	"name": "music-events-frontend",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start -p ${PORT:=3000}",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"cookie": "^0.4.1",
+		"cors": "^2.8.5",
+		"file-loader": "^6.2.0",
+		"moment": "^2.29.1",
+		"next": "^12.0.8",
+		"qs": "^6.10.1",
+		"react": "17.0.2",
+		"react-dom": "17.0.2",
+		"react-icons": "^4.3.1",
+		"react-map-gl": "^6.1.18",
+		"react-toastify": "^8.0.3",
+		"sharp": "^0.29.3",
+		"url-loader": "^4.1.1"
+	},
+	"devDependencies": {
+		"eslint": "8.6.0",
+		"eslint-config-next": "^12.0.8"
+	}
 }

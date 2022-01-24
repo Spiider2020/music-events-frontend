@@ -9,7 +9,9 @@ class MyDocument extends Document {
 	render() {
 		return (
 			<Html>
-				<Head />
+				<Head>
+					<link rel='shortcut icon' href='/music-events/favicon.ico' />
+				</Head>
 				<body>
 					<Main />
 					<NextScript />
