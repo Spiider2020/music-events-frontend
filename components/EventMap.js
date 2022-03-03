@@ -67,9 +67,10 @@ export default function EventMap({ evt }) {
 			{...viewport}
 			mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
 			onViewportChange={(vp) => setViewport(vp)}
+			crossOrigin='anonymous'
 		>
-			<Marker key={evt.id} latitude={lat} longitude={lng}>
-				<Image src={pin} width={30} height={30} alt='pin' />
+			<Marker key={evt.id} latitude={lat} longitude={lng} crossOrigin='anonymous'>
+				<Image src={pin} width={30} height={30} alt='pin' crossOrigin='anonymous' />
 			</Marker>
 		</ReactMapGl>
 	);
