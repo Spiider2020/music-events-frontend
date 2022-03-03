@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import ApiError from './ApiError';
 import { useState, useEffect } from 'react';
 import { NEXT_URL } from '@/config/index';
 import ReactMapGl, { Marker } from 'react-map-gl';
@@ -8,6 +9,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 export default function EventMap({ evt }) {
 	const [lat, setLat] = useState(null);
 	const [lng, setLng] = useState(null);
+	const [resStatus, setResStatus] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [viewport, setViewport] = useState({
 		width: '100%',
@@ -29,13 +31,38 @@ export default function EventMap({ evt }) {
 		const data = await response.json();
 		setLat(data.latitude);
 		setLng(data.longitude);
+		setResStatus(data.res_status);
 		setViewport({ ...viewport, latitude: data.latitude, longitude: data.longitude });
 		setLoading(false);
 	}, []);
 
 	if (loading) return false;
 
-	return (
+	const getError = () => {
+		switch (resStatus) {
+			case 502:
+				return <ApiError>Map could not be loaded. Geocoding API Offline.</ApiError>;
+				break;
+			case 401:
+				return <ApiError>Invalid Geocoding API key.</ApiError>;
+				break;
+			case 403:
+				return <ApiError>Endpoint not supported with current Geocoding API subscription plan.</ApiError>;
+				break;
+			case 404:
+				return <ApiError>Invalid Geocoding API endpoint.</ApiError>;
+				break;
+			case 429:
+				return <ApiError>Geocoding API account rate limit reached.</ApiError>;
+				break;
+			default:
+				return <ApiError>Unknown Geocoding API Error.</ApiError>;
+		}
+	};
+
+	return resStatus !== 200 ? (
+		getError()
+	) : (
 		<ReactMapGl
 			{...viewport}
 			mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
